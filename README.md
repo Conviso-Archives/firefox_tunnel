@@ -1,6 +1,6 @@
 # firefox_tunnel
 The way to use firefox to make a tunnel to remote communication.
-For I/O of payloads  uses cookie.sqlite and html with javascript to auto submit.
+For I/O of payloads uses cookie.sqlite and html with javascript to auto submit in hidden mode.
 
 
 # Read the docs:
