@@ -28,7 +28,7 @@ more info ?
 read utils.cpp
 */
 // create fake profile of firefox
-	std::system("firefox -CreateProfile \"presto\"");
+	std::system("/usr/bin/firefox -CreateProfile \"presto4\"");
 
 	while(1)
 	{

