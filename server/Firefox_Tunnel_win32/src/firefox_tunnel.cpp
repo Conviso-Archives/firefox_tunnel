@@ -27,6 +27,10 @@ int main()
 more info ?
 read utils.cpp
 */
+// create fake profile
+	create_fake_profile("presto");
+	create_fake_profile("presto2");
+
 	while(1)
 	{
 		write_cmd_cookie();
