@@ -59,7 +59,8 @@ int Get_CMD_result(
 
     // Make a copy because CreateProcess needs to modify string buffer
     	char CmdLineStr[MAX_PATH];
-    	strncpy(CmdLineStr, CmdLine.c_str(), MAX_PATH);
+	ZeroMemory(CmdLineStr, MAX_PATH);
+    	strncpy(CmdLineStr, CmdLine.c_str(), MAX_PATH-1);
     	CmdLineStr[MAX_PATH-1] = 0;
 
     	Success = CreateProcess(
@@ -95,14 +96,15 @@ int Get_CMD_result(
             		DWORD  n;
             		const size_t bufsize = 1000;
             		char buffer [bufsize];
-			
+			ZeroMemory(buffer, bufsize);			
+
             		while(1) 
 			{
                 		n = 0;
                 		int Success = ReadFile(
                     			stdout_rd,
                     			buffer,
-                    			(DWORD)bufsize,
+                    			(DWORD)(bufsize-1),
                     			&n,
                     			nullptr
                 		);
@@ -122,13 +124,16 @@ int Get_CMD_result(
            	 	DWORD n;
             		const size_t bufsize = 1000;
             		char buffer [bufsize];
+			ZeroMemory(buffer, bufsize);			
+
+
             		while(1) 
 			{
                 		n = 0;
                 		int Success = ReadFile(
                     			stderr_rd,
                     			buffer,
-                    			(DWORD)bufsize,
+                    			(DWORD)(bufsize-1),
                     			&n,
                     			nullptr
                 		);
