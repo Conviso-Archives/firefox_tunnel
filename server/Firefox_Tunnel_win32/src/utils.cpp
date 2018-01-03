@@ -61,7 +61,6 @@ int Get_CMD_result(
     	char CmdLineStr[MAX_PATH];
 	ZeroMemory(CmdLineStr, MAX_PATH);
     	strncpy(CmdLineStr, CmdLine.c_str(), MAX_PATH-1);
-    	CmdLineStr[MAX_PATH-1] = 0;
 
     	Success = CreateProcess(
         	nullptr,
